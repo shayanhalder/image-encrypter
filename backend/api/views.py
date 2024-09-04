@@ -24,7 +24,7 @@ def encrypt_image_message(request):
                 save_file.write(b'hello world!')
                 image_data = save_file.read()
             
-            return HttpResponse(image_data, content_type='image/jpeg', status=200) #"File uploaded successfully", status=200)
+            return HttpResponse(image_data, content_type='image/jpeg', status=200) # "File uploaded successfully", status=200)
         
         
             # with open('test_file.jpg', 'rb') as save_file:
