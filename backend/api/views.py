@@ -8,6 +8,7 @@ from .serializers import UserSerializer, NoteSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Note
 from django.http import JsonResponse
+from django.core.files.uploadedfile import TemporaryUploadedFile
 from . import cdn
 import json
 
@@ -16,14 +17,18 @@ import json
 def encrypt_image_message(request):
     print('got request...', request)
     
-    file = request.FILES.get('file')
+    file : TemporaryUploadedFile = request.FILES.get('file')
+    # print('file: ', file)
+    # print('file content type: ', file.content_type) 
+    
     data = request.data
     
     body = json.loads(data['body'])
     file_name = body['file_name']
+    # print('file name: ', file_name)
     
     if file:
-        if file.content_type == "image/jpeg":
+        if file.content_type == "image/jpeg" or file.content_type == "image/png":
             response = cdn.upload_file(file, host_path=f'uploaded_images/{file_name}')
             
             return JsonResponse(response) 
