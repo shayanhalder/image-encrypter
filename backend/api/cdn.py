@@ -32,7 +32,7 @@ def upload_file(file: InMemoryUploadedFile, host_path: str):
     querystring = {'filename': f'/{host_path}'} 
     # print('query string: ', querystring)
     headers = {
-        'content-type': 'image/png',
+        'content-type': file.content_type,
         'authorization': 'Bearer %s' % bearer_token
     }
 
