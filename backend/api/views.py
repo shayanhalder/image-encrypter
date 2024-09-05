@@ -8,30 +8,36 @@ from .serializers import UserSerializer, NoteSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Note
 from django.http import JsonResponse
-from django.core.files.uploadedfile import TemporaryUploadedFile
+from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 from . import cdn
 import json
+from . import encrypt
 
 # Create your views here.
 @api_view(['POST'])
 def encrypt_image_message(request):
     print('got request...', request)
     
-    file : TemporaryUploadedFile = request.FILES.get('file')
-    # print('file: ', file)
-    # print('file content type: ', file.content_type) 
-    
+    file : InMemoryUploadedFile = request.FILES.get('file')
     data = request.data
     
     body = json.loads(data['body'])
     file_name = body['file_name']
-    # print('file name: ', file_name)
+    message = body['message']
     
-    if file:
-        if file.content_type == "image/jpeg" or file.content_type == "image/png":
-            response = cdn.upload_file(file, host_path=f'uploaded_images/{file_name}')
+    encrypted_file = encrypt.encrypt_image_message(file, message)
+    if encrypted_file:
+        if encrypted_file.content_type == "image/jpeg" or encrypted_file.content_type == "image/png":
+            response = cdn.upload_file(encrypted_file, host_path=f'uploaded_images/{file_name}')
             
             return JsonResponse(response) 
+    
+    
+    # if file:
+    #     if file.content_type == "image/jpeg" or file.content_type == "image/png":
+    #         response = cdn.upload_file(file, host_path=f'uploaded_images/{file_name}')
+            
+    #         return JsonResponse(response) 
              
     return HttpResponse("Invalid request. ", status=400)
 
