@@ -30,6 +30,7 @@ def get_token():
 def upload_file(file: InMemoryUploadedFile, host_path: str):
     bearer_token = get_token()
     querystring = {'filename': f'/{host_path}'} 
+    # print('query string: ', querystring)
     headers = {
         'content-type': 'image/png',
         'authorization': 'Bearer %s' % bearer_token
