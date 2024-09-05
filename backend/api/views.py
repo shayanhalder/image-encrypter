@@ -9,24 +9,25 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Note
 from django.http import JsonResponse
 from . import cdn
+import json
 
 # Create your views here.
 @api_view(['POST'])
 def encrypt_image_message(request):
-    print('got request...')
+    print('got request...', request)
     
-    file = request.FILES.get('file') 
+    file = request.FILES.get('file')
+    data = request.data
+    
+    body = json.loads(data['body'])
+    file_name = body['file_name']
     
     if file:
         if file.content_type == "image/jpeg":
-            response = cdn.upload_file(file, host_path='uploaded_images/test.jpg')
-            print('cdn response: ', response)
+            response = cdn.upload_file(file, host_path=f'uploaded_images/{file_name}')
             
             return JsonResponse(response) 
              
-                
-                
-        
     return HttpResponse("Invalid request. ", status=400)
 
 
