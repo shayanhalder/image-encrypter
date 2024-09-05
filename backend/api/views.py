@@ -15,9 +15,7 @@ from . import cdn
 def encrypt_image_message(request):
     print('got request...')
     
-    file = request.FILES.get('file')
-    # print('file: ', file)
-    # print('file chunks: ', file.chunks())
+    file = request.FILES.get('file') 
     
     if file:
         if file.content_type == "image/jpeg":
