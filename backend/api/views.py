@@ -7,36 +7,27 @@ from django.http import FileResponse
 from .serializers import UserSerializer, NoteSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Note
+from django.http import JsonResponse
+from . import cdn
+import json
 
 # Create your views here.
 @api_view(['POST'])
 def encrypt_image_message(request):
-    print('got image!')
+    print('got request...', request)
+    
     file = request.FILES.get('file')
+    data = request.data
+    
+    body = json.loads(data['body'])
+    file_name = body['file_name']
     
     if file:
         if file.content_type == "image/jpeg":
-            with open('test_file.jpg', 'wb') as save_file:
-                for chunk in file.chunks():
-                    save_file.write(chunk)
+            response = cdn.upload_file(file, host_path=f'uploaded_images/{file_name}')
             
-            with open('test_file.jpg', 'a+b') as save_file:
-                save_file.write(b'hello world!')
-                image_data = save_file.read()
-            
-            return HttpResponse(image_data, content_type='image/jpeg', status=200) # "File uploaded successfully", status=200)
-        
-        
-            # with open('test_file.jpg', 'rb') as save_file:
-            #     data = save_file.read()
-            #     start = data.index(bytes.fromhex('FFD9'))
-                
-            #     save_file.seek(start + 2)
-            #     save_file.write(b'Hello world!')
-                
-                
-                
-        
+            return JsonResponse(response) 
+             
     return HttpResponse("Invalid request. ", status=400)
 
 

@@ -8,22 +8,18 @@ function Home() {
     async function sendImage() {
         const formData = new FormData()
         if (inputRef.current && inputRef.current.files) {
-            // console.log('ref: ', inputRef.current.files[0])
             const file = inputRef.current.files[0]
-            // console.log('file: ', file)?
             formData.append('file', file)
-            const response = await api.post('/api/encrypt-image-message/', formData)
-            console.log('response: ', response)
-            // const blob = response.blob()
+            formData.set('body', '{"file_name": "test101.jpg"}')
 
-            // if (response.status === 200) {
-            //     localStorage.setItem(ACCESS_TOKEN, res.data.access)
-            //     setIsAuthorized(true)
-            // } else {
-            //     setIsAuthorized(false)
+            // const body = {
+            //     'file': formData,
+            //     'file_name': 'frontend_test.jpg'
             // }
 
-
+            const response = await api.post('/api/encrypt-image-message/', formData)
+            // const response = await api.post('/api/encrypt-image-message/', body)
+            console.log('response: ', response)
 
         }
 

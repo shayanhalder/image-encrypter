@@ -1,6 +1,6 @@
 import requests
 import json
-
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 BEARER_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRJZCI6IkZLdmtjamZOUDJjaXBLaTdCcDhmazd0a0VpViIsImNsaWVudE5hbWUiOiJpbWFnZS1lbmNyeXB0ZXIiLCJzY29wZSI6WyJhY2NvdW50OnJlYWQiLCJhY2NvdW50OndyaXRlIiwidXNlcjpyZWFkIiwidXNlcjp3cml0ZSIsImJpbGxpbmc6cmVhZCIsImJpbGxpbmc6d3JpdGUiLCJmaWxlczpyZWFkIiwiZmlsZXM6d3JpdGUiLCJmaWxlczpjcmVhdGUiLCJmaWxlczp1cGxvYWQ6bXVsdGlwYXJ0IiwiZmlsZXM6c2hhcmVkQmlsbGluZyIsInZpZGVvcyIsImltYWdlcyJdLCJpYXQiOjE3MjU0MzAyMDIsImV4cCI6MTcyNTQzMTQwMiwiYXVkIjoiYzNrM2VoancxdGhpdm5za3ptaWhwMzE1dG95bHQ1enQifQ.rcDt9PqgFufEnW8df2srH9gSew3V0hEpRTgeFFMCVpI'
 
@@ -27,17 +27,15 @@ def get_token():
 
 # upload file
 
-def upload_file(local_path: str, host_path: str, bearer_token: str):
-    # querystring = {'filename':'/uploaded_images/uploaded_headshot.png'}
-    querystring = {'filename': f'/{host_path}'}
-    payload = open(local_path, 'rb')
-
+def upload_file(file: InMemoryUploadedFile, host_path: str):
+    bearer_token = get_token()
+    querystring = {'filename': f'/{host_path}'} 
     headers = {
         'content-type': 'image/png',
         'authorization': 'Bearer %s' % bearer_token
     }
 
-    response = requests.post(UPLOAD_URL, data=payload, headers=headers, params=querystring)
+    response = requests.post(UPLOAD_URL, data=file, headers=headers, params=querystring)
 
     output = {
         'status': response.status_code,
@@ -46,4 +44,6 @@ def upload_file(local_path: str, host_path: str, bearer_token: str):
     }
 
     return output
+ 
+ 
  
