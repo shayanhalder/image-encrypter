@@ -42,6 +42,26 @@ def encrypt_image_message(request):
     return HttpResponse("Invalid request. ", status=400)
 
 
+@api_view(['POST'])
+def decrypt_image_message(request):
+    print('got request...', request)
+    
+    file : InMemoryUploadedFile = request.FILES.get('file')  
+    
+    message = encrypt.decrypt_image_message(file)
+    print('message is: ', message)
+    
+    return JsonResponse({'message': message})
+    
+    # if encrypted_file:
+    #     if encrypted_file.content_type == "image/jpeg" or encrypted_file.content_type == "image/png":
+    #         response = cdn.upload_file(encrypted_file, host_path=f'uploaded_images/{file_name}')
+            
+    #         return JsonResponse(response) 
+    
+   
+
+
 class NoteListCreate(generics.ListCreateAPIView):
     serializer_class = NoteSerializer
     permission_classes = [IsAuthenticated]

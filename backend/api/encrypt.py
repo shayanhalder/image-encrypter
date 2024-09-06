@@ -24,12 +24,14 @@ def encrypt_image_message(file: InMemoryUploadedFile, message: str) -> InMemoryU
     
     
     
-def decrypt_image_message(file: InMemoryUploadedFile, message: str):
+def decrypt_image_message(file: InMemoryUploadedFile) -> str:
     content:str = file.read()
     offset = content.index(bytes.fromhex("FFD9"))
     
-    file.seek(offset + 2)
-    print(file.read())
+    file.seek(offset + 2) 
+    
+    output = file.read()
+    return output.decode()
     
      
 
