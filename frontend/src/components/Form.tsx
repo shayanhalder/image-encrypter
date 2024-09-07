@@ -22,6 +22,7 @@ function Form({ route, method }: any) {
             const res = await api.post(route, { username, password })
             console.log('res: ', res)
             if (method === "login") {
+                localStorage.setItem("username", username)
                 localStorage.setItem(ACCESS_TOKEN, res.data.access)
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
                 navigate("/")

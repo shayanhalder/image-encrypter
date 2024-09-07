@@ -8,6 +8,7 @@ BEARER_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRJZCI6IkZLdmtjamZ
 
 TOKEN_URL = 'https://api.sirv.com/v2/token'
 UPLOAD_URL = 'https://api.sirv.com/v2/files/upload'
+STAT_URL = 'https://api.sirv.com/v2/files/stat'
 CDN_URL = 'https://image-encrypter.sirv.com'
 CLIENT_ID = 'FKvkcjfNP2cipKi7Bp8fk7tkEiV'
 CLIENT_SECRET = 'td+IqHPUUptndGwvneT0drcQ0DpeIBEOd2roxgmwPG6NdQfRtXd4g2VGJXogMwfOLnxgYxFWxz+LdFH9trG4GA=='
@@ -24,13 +25,30 @@ def get_token():
     token = response.json()['token']
     return token
 
+def file_already_exists(file_name: str, username: str, bearer_token: str):
+    headers = {
+        'content-type': 'application/json',
+        'authorization': 'Bearer %s' % bearer_token
+    }
+    
+    querystring = {'filename': f'/uploaded_images/{username}/{file_name}'}  
+    response = json.loads(requests.get(STAT_URL, headers=headers, params=querystring).text)
+    return "statusCode" not in response and not response["isDirectory"]
+    
+
 
 # upload file
 
-def upload_file(file: InMemoryUploadedFile, host_path: str):
+def upload_file(file: InMemoryUploadedFile, username: str, file_name: str):
     bearer_token = get_token()
-    querystring = {'filename': f'/{host_path}'} 
-    # print('query string: ', querystring)
+    if file_already_exists(file_name, username, bearer_token):
+        return {
+            'status': '409',
+            'text': f'File {file_name} already exists',
+        }
+    
+    querystring = {'filename': f'/uploaded_images/{username}/{file_name}'}  
+    
     headers = {
         'content-type': file.content_type,
         'authorization': 'Bearer %s' % bearer_token
@@ -41,7 +59,7 @@ def upload_file(file: InMemoryUploadedFile, host_path: str):
     output = {
         'status': response.status_code,
         'text': response.text,
-        'url': f'{CDN_URL}/{host_path}'
+        'url': f'{CDN_URL}/{username}/{file_name}'
     }
 
     return output
