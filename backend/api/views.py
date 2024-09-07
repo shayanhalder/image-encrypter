@@ -25,10 +25,12 @@ def encrypt_image_message(request):
     file_name = body['file_name']
     message = body['message']
     username = body['username']
+    override = body['override']
+    print('override: ', override)
     
     encrypted_file = encrypt.encrypt_image_message(file, message)
     if encrypted_file and encrypted_file.content_type in VAlID_FILE_TYPES:
-        response = cdn.upload_file(encrypted_file, username=username, file_name=file_name)    
+        response = cdn.upload_file(encrypted_file, username=username, file_name=file_name, override=override)    
         return JsonResponse(response) 
              
     return HttpResponse("Invalid request. ", status=400)
