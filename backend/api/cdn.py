@@ -39,9 +39,9 @@ def file_already_exists(file_name: str, username: str, bearer_token: str):
 
 # upload file
 
-def upload_file(file: InMemoryUploadedFile, username: str, file_name: str):
+def upload_file(file: InMemoryUploadedFile, username: str, file_name: str, override: bool):
     bearer_token = get_token()
-    if file_already_exists(file_name, username, bearer_token):
+    if not override and file_already_exists(file_name, username, bearer_token):
         return {
             'status': '409',
             'text': f'File {file_name} already exists',
@@ -59,7 +59,7 @@ def upload_file(file: InMemoryUploadedFile, username: str, file_name: str):
     output = {
         'status': response.status_code,
         'text': response.text,
-        'url': f'{CDN_URL}/{username}/{file_name}'
+        'url': f'{CDN_URL}/uploaded_images/{username}/{file_name}'
     }
 
     return output

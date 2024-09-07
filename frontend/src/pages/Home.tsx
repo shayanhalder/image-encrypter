@@ -28,16 +28,24 @@ function Home() {
         if (inputRef.current && inputRef.current.files && mode == "Encrypt") {
             const file = inputRef.current.files[0]
             formData.append('file', file)
-            const body = {
+            let body = {
                 file_name: fileName,
                 message: message,
-                username: localStorage.getItem("username")
+                username: localStorage.getItem("username"),
+                override: false
             }
             formData.set('body', JSON.stringify(body))
-            const response: postResponse = await api.post(ENDPOINT, formData)
+            let response: postResponse = await api.post(ENDPOINT, formData)
             console.log('response: ', response)
             if (response.data.status == "409") {
                 alert(response.data.text)
+                const action = prompt(`Do you want to replace ${fileName}? `)
+                if (action == "yes") {
+                    body['override'] = true
+                    console.log('new body: ', body)
+                    formData.set('body', JSON.stringify(body))
+                    response = await api.post(ENDPOINT, formData)
+                }
             }
 
             const url = response.data.url
