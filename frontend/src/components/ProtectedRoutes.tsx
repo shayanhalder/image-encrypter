@@ -22,10 +22,12 @@ function ProtectedRoute({ children }: any) {
                 localStorage.setItem(ACCESS_TOKEN, res.data.access)
                 setIsAuthorized(true)
             } else {
+                localStorage.setItem("username", "")
                 setIsAuthorized(false)
             }
         } catch (error) {
             console.log(error)
+            localStorage.setItem("username", "")
             setIsAuthorized(false)
         }
     }
@@ -37,6 +39,7 @@ function ProtectedRoute({ children }: any) {
         const token = localStorage.getItem(ACCESS_TOKEN)
         if (!token) {
             setIsAuthorized(false);
+            localStorage.setItem("username", "")
             return
         }
 

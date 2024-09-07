@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from rest_framework import generics
 from rest_framework.decorators import api_view
-from django.http import FileResponse
 from .serializers import UserSerializer, NoteSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Note
@@ -13,7 +12,8 @@ from . import cdn
 import json
 from . import encrypt
 
-# Create your views here.
+VAlID_FILE_TYPES = {"image/jpeg", "image/png", "application/pdf"}
+
 @api_view(['POST'])
 def encrypt_image_message(request):
     print('got request...', request)
@@ -24,20 +24,12 @@ def encrypt_image_message(request):
     body = json.loads(data['body'])
     file_name = body['file_name']
     message = body['message']
+    username = body['username']
     
     encrypted_file = encrypt.encrypt_image_message(file, message)
-    if encrypted_file:
-        if encrypted_file.content_type == "image/jpeg" or encrypted_file.content_type == "image/png":
-            response = cdn.upload_file(encrypted_file, host_path=f'uploaded_images/{file_name}')
-            
-            return JsonResponse(response) 
-    
-    
-    # if file:
-    #     if file.content_type == "image/jpeg" or file.content_type == "image/png":
-    #         response = cdn.upload_file(file, host_path=f'uploaded_images/{file_name}')
-            
-    #         return JsonResponse(response) 
+    if encrypted_file and encrypted_file.content_type in VAlID_FILE_TYPES:
+        response = cdn.upload_file(encrypted_file, username=username, file_name=file_name)    
+        return JsonResponse(response) 
              
     return HttpResponse("Invalid request. ", status=400)
 
@@ -51,15 +43,7 @@ def decrypt_image_message(request):
     message = encrypt.decrypt_image_message(file)
     print('message is: ', message)
     
-    return JsonResponse({'message': message})
-    
-    # if encrypted_file:
-    #     if encrypted_file.content_type == "image/jpeg" or encrypted_file.content_type == "image/png":
-    #         response = cdn.upload_file(encrypted_file, host_path=f'uploaded_images/{file_name}')
-            
-    #         return JsonResponse(response) 
-    
-   
+    return JsonResponse({'message': message}) 
 
 
 class NoteListCreate(generics.ListCreateAPIView):

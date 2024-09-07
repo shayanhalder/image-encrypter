@@ -23,19 +23,32 @@ function Home() {
     const ENDPOINT = mode === "Encrypt" ? '/api/encrypt-image-message/' : '/api/decrypt-image-message/'
 
     async function sendImage() {
+        // console.log('username is: ', localStorage.getItem('username'))
         const formData = new FormData()
         if (inputRef.current && inputRef.current.files && mode == "Encrypt") {
             const file = inputRef.current.files[0]
             formData.append('file', file)
-            formData.set('body', `{"file_name": "${fileName}", "message": "${message}"}`)
+            const body = {
+                file_name: fileName,
+                message: message,
+                username: localStorage.getItem("username")
+            }
+            formData.set('body', JSON.stringify(body))
             const response: postResponse = await api.post(ENDPOINT, formData)
             console.log('response: ', response)
+            if (response.data.status == "409") {
+                alert(response.data.text)
+            }
+
             const url = response.data.url
             setImageURL(url)
         } else if (inputRef.current && inputRef.current.files) {
             const file = inputRef.current.files[0]
             formData.append('file', file)
-            // formData.set('body', `{"file_name": "${fileName}", "message": "${message}"}`)
+            const body = {
+                username: localStorage.getItem("username")
+            }
+            formData.set('body', JSON.stringify(body))
             const response: postResponse = await api.post(ENDPOINT, formData)
             console.log('response: ', response)
             setSecretMessage(response.data.message)
