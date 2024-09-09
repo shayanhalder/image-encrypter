@@ -4,17 +4,16 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from dotenv import load_dotenv
 import os
 
-
 load_dotenv()
 
 # First, get a token
 
-TOKEN_URL = os.getenv("TOKEN_URL") #'https://api.sirv.com/v2/token'
-UPLOAD_URL = os.getenv("UPLOAD_URL")#'https://api.sirv.com/v2/files/upload'
-STAT_URL = os.getenv("STAT_URL")#'https://api.sirv.com/v2/files/stat'
-CDN_URL = os.getenv("CDN_URL")#'https://image-encrypter.sirv.com'
-CLIENT_ID = os.getenv("CLIENT_ID") #'FKvkcjfNP2cipKi7Bp8fk7tkEiV'
-CLIENT_SECRET = os.getenv("CLIENT_SECRET") #'td+IqHPUUptndGwvneT0drcQ0DpeIBEOd2roxgmwPG6NdQfRtXd4g2VGJXogMwfOLnxgYxFWxz+LdFH9trG4GA=='
+TOKEN_URL = os.getenv("TOKEN_URL") 
+UPLOAD_URL = os.getenv("UPLOAD_URL")
+STAT_URL = os.getenv("STAT_URL")
+CDN_URL = os.getenv("CDN_URL")
+CLIENT_ID = os.getenv("CLIENT_ID")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 
 
 def get_token():
