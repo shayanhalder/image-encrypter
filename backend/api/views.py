@@ -26,7 +26,6 @@ def encrypt_image_message(request):
     message = body['message']
     username = body['username']
     override = body['override']
-    print('override: ', override)
     
     encrypted_file = encrypt.encrypt_image_message(file, message)
     if encrypted_file and encrypted_file.content_type in VAlID_FILE_TYPES:
