@@ -1,71 +1,56 @@
-import requests
-import json
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from dotenv import load_dotenv
 import os
+import boto3
+import tempfile
+from botocore.exceptions import ClientError
 
 load_dotenv()
+BUCKET_NAME = os.getenv("BUCKET_NAME")
+s3_upload_client = boto3.client('s3') # use for upload
 
-# First, get a token
+def file_already_exists(file_name: str, username: str):
+    s3_file_path = f'{username}/{file_name}'
+    try: 
+        s3_upload_client.head_object(Bucket=BUCKET_NAME, Key=s3_file_path)
+        return True
+    except ClientError as e:
+        if e.response['Error']['Code'] == '404':
+            return False
+        else:
+            raise e 
 
-TOKEN_URL = os.getenv("TOKEN_URL") 
-UPLOAD_URL = os.getenv("UPLOAD_URL")
-STAT_URL = os.getenv("STAT_URL")
-CDN_URL = os.getenv("CDN_URL")
-CLIENT_ID = os.getenv("CLIENT_ID")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-
-
-def get_token():
-    payload = {
-        'clientId': CLIENT_ID,
-        'clientSecret': CLIENT_SECRET
-    }
-
-    headers = {'content-type': 'application/json'}
-
-    response = requests.request('POST', TOKEN_URL, data=json.dumps(payload), headers=headers)
-    token = response.json()['token']
-    return token
-
-def file_already_exists(file_name: str, username: str, bearer_token: str):
-    headers = {
-        'content-type': 'application/json',
-        'authorization': 'Bearer %s' % bearer_token
-    }
-    
-    querystring = {'filename': f'/uploaded_images/{username}/{file_name}'}  
-    response = json.loads(requests.get(STAT_URL, headers=headers, params=querystring).text)
-    return "statusCode" not in response and not response["isDirectory"]
-    
-
-
-# upload file
 
 def upload_file(file: InMemoryUploadedFile, username: str, file_name: str, override: bool):
-    bearer_token = get_token()
-    if not override and file_already_exists(file_name, username, bearer_token):
+    if not override and file_already_exists(file_name, username):
         return {
             'status': '409',
             'text': f'File {file_name} already exists',
         }
+
+    temp_file = tempfile.NamedTemporaryFile(delete=True)
+    temp_file.write(file.read())
+    temp_file_path = temp_file.name
     
-    querystring = {'filename': f'/uploaded_images/{username}/{file_name}'}  
+    # Define the file and bucket
+    s3_file_path = f'{username}/{file_name}' # File name in S3
+
+    # Upload the file
+    s3_upload_client.upload_file(temp_file_path, BUCKET_NAME, s3_file_path)
+    temp_file.close() 
     
-    headers = {
-        'content-type': file.content_type,
-        'authorization': 'Bearer %s' % bearer_token
-    }
-
-    response = requests.post(UPLOAD_URL, data=file, headers=headers, params=querystring)
-
-    output = {
-        'status': response.status_code,
-        'text': response.text,
-        'url': f'{CDN_URL}/uploaded_images/{username}/{file_name}'
-    }
-
-    return output
- 
+    if file_already_exists(file_name, username):
+        return {
+            'status': '200',
+            'text': 'File uploaded successfully.',
+            'url': f'{username}/{file_name}'
+        }
+    else:
+        return {
+            'status': '400',
+            'text': 'Server-side error.',
+            'url': None
+        }
+    
  
  
