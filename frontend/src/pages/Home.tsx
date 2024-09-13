@@ -77,23 +77,17 @@ function Home() {
     return (
         <div>
             <h1>Home</h1>
-            <div>
+            <div className="menu">
                 <Slider left='Encrypt' right='Decrypt'></Slider>
-                {/* <select onChange={(e) => setMode(e.target.value)}>
-                    <option> Encrypt </option>
-                    <option> Decrypt </option>
-                </select> */}
-
-                <label htmlFor='imageUpload'> Upload image file: </label> <br />
-                <input type='file' id='imageUpload' name='imageUpload' accept='image/*' ref={inputRef} onChange={handleFileChange} /> <br />
+                <input type='file' id='imageUpload' name='imageUpload' accept='image/*' ref={inputRef} onChange={handleFileChange} /> 
                 {
                     mode == "Encrypt" && (
-                        <><input type='text' placeholder="Insert message here" value={message} onChange={(e) => setMessage(e.target.value)} /> <br /><br />
-                            <input type='text' placeholder="Insert file name here" value={fileName} onChange={handleNameChange} /><br />
+                        <>
+                            <input type='text' placeholder="Insert file name here" value={fileName} onChange={handleNameChange} /> 
+                            <textarea placeholder="Insert message here" value={message} onChange={(e) => setMessage(e.target.value)} />  
                         </>
                     )
                 }
-                <br />
                 <button type='submit' onClick={sendImage}> Submit </button>
                 {
                     secretMessage && (
