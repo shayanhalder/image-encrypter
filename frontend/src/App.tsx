@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
 
@@ -21,7 +20,7 @@ function RegisterAndLogOut() {
 
 
 function App() {
-  const [username, setUsername] = useState<string>("")
+  // const [username, setUsername] = useState<string>("")
 
   return (
     <BrowserRouter>
