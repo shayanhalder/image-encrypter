@@ -1,10 +1,9 @@
 import { useState } from "react"
 import styles from "./Slider.module.css"
 
-export default function Slider({ left, right }: any){ 
-    const [choice, setChoice] = useState<string>(left);
-    const leftStyle = choice ==  left ? (" " + styles.selected) : ""
-    const rightStyle = choice == right ? (" " + styles.selected) : ""
+export default function Slider({ choice, setChoice }: any){ 
+    const leftStyle = choice ==  "Encrypt" ? (" " + styles.selected) : ""
+    const rightStyle = choice == "Decrypt" ? (" " + styles.selected) : ""
 
     function select(e : any) {
         console.log(e)
@@ -14,10 +13,10 @@ export default function Slider({ left, right }: any){
     return (
         <div className={styles.container}>
                 <div className={styles.choice + leftStyle} onClick={select}>
-                    {left}
+                    Encrypt
                 </div>
                 <div className={styles.choice + rightStyle} onClick={select}>
-                    {right}
+                    Decrypt
                 </div>
         </div>
     )

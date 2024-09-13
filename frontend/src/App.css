@@ -43,13 +43,15 @@
   align-items: center;
   row-gap: 0.5em;
   width: 13em;
-  /* width: fit-content; */
+  height: 20em;
+}
+
+.menu input[type='text'] {
+  width: 100%;
 }
 
 .menu input[type='file'] {
-  /* width: 10em; */
-  display: inline;
-  width: 70%;
+  max-width: 100%;
 }
 
 .menu textarea {

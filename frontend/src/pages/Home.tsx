@@ -17,15 +17,16 @@ function Home() {
     const [message, setMessage] = useState<string>("")
     const [fileName, setFileName] = useState<string>("")
     const [imageURL, setImageURL] = useState<string>("")
-    const [mode, setMode] = useState<string>("Encrypt")
+    const [choice, setChoice] = useState<string>("Encrypt");
     const [secretMessage, setSecretMessage] = useState<string>("")
+    // const [decryptedMessage, setDecryptedMessage] = useState<string>("")
 
-    const ENDPOINT = mode === "Encrypt" ? '/api/encrypt-image-message/' : '/api/decrypt-image-message/'
+    const ENDPOINT = choice === "Encrypt" ? '/api/encrypt-image-message/' : '/api/decrypt-image-message/'
 
     async function sendImage() {
         // console.log('username is: ', localStorage.getItem('username'))
         const formData = new FormData()
-        if (inputRef.current && inputRef.current.files && mode == "Encrypt") {
+        if (inputRef.current && inputRef.current.files && choice == "Encrypt") {
             const file = inputRef.current.files[0]
             formData.append('file', file)
             let body = {
@@ -78,10 +79,10 @@ function Home() {
         <div>
             <h1>Home</h1>
             <div className="menu">
-                <Slider left='Encrypt' right='Decrypt'></Slider>
+                <Slider choice={choice} setChoice={setChoice}></Slider>
                 <input type='file' id='imageUpload' name='imageUpload' accept='image/*' ref={inputRef} onChange={handleFileChange} /> 
                 {
-                    mode == "Encrypt" && (
+                    choice == "Encrypt" && (
                         <>
                             <input type='text' placeholder="Insert file name here" value={fileName} onChange={handleNameChange} /> 
                             <textarea placeholder="Insert message here" value={message} onChange={(e) => setMessage(e.target.value)} />  
@@ -90,7 +91,7 @@ function Home() {
                 }
                 <button type='submit' onClick={sendImage}> Submit </button>
                 {
-                    secretMessage && (
+                    choice == "Decrypt" && secretMessage && (
                         <h3> Decrypted message: {secretMessage} </h3>
                     )
                 }
