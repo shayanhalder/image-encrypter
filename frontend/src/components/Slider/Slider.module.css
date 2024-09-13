@@ -1,0 +1,22 @@
+.container {
+    border-radius: 5px; 
+    width: fit-content; 
+    height: fit-content;
+    border: 1px solid white;
+    display: flex;
+    column-gap: 1em; 
+    padding: .5em .5em;
+}
+
+.choice {
+    padding: .75em .75em;
+    width: 50%;
+    cursor: pointer;
+}
+
+.selected {
+    transition: all .5s ease-out;
+    background-color: rgb(192, 85, 153);
+}
+
+

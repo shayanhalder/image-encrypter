@@ -1,6 +1,6 @@
 import api from "../api"
 import { useState, useRef } from "react"
-
+import Slider from "../components/Slider/Slider"
 
 interface postResponse {
     data: {
@@ -78,10 +78,11 @@ function Home() {
         <div>
             <h1>Home</h1>
             <div>
-                <select onChange={(e) => setMode(e.target.value)}>
+                <Slider left='Encrypt' right='Decrypt'></Slider>
+                {/* <select onChange={(e) => setMode(e.target.value)}>
                     <option> Encrypt </option>
                     <option> Decrypt </option>
-                </select>
+                </select> */}
 
                 <label htmlFor='imageUpload'> Upload image file: </label> <br />
                 <input type='file' id='imageUpload' name='imageUpload' accept='image/*' ref={inputRef} onChange={handleFileChange} /> <br />
